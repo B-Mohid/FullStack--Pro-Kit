@@ -1,0 +1,21 @@
+{
+"name": "fullstack-pro-kit",
+"version": "1.0.0",
+"description": "A modern boilerplate for building scalable full-stack applications.",
+"main": "index.html",
+"scripts": {
+"start": "echo 'This is a boilerplate. To run this project, you need to set up your backend and front-end servers separately. Refer to the documentation in README.md.'"
+},
+"keywords": [
+"fullstack",
+"boilerplate",
+"web-development",
+"react",
+"node",
+"express",
+"template"
+],
+"author": "B_Mohid",
+"license": "MIT",
+"private": true
+}
