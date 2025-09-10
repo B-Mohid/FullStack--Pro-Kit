@@ -40,7 +40,7 @@ LICENSE: The MIT license for this project.
 
 package.json: Project metadata and dependencies.
 
-To-Do App: A single-file front-end example showcasing interaction with a simulated API.
+index.html: A single-file front-end example showcasing interaction with a simulated API.
 
 💡 Philosophy
 The core philosophy of the FullStack Pro Kit is to provide a starting point that saves time without sacrificing quality. We believe in:
