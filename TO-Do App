@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FullStack Pro Kit | To-Do App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: white;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: all 0.2s ease-in-out;
+        }
+        .task-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .done {
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <!-- Main Container -->
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-xl">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">FullStack To-Do App</h1>
+        <p class="text-gray-500 mb-6 text-center">
+            This front-end demonstrates a scalable architecture for a full-stack application.
+            It simulates API interactions to fetch, add, and delete data, mimicking a real-world back-end connection.
+        </p>
+
+        <!-- Task Input Form -->
+        <form id="taskForm" class="flex flex-col sm:flex-row gap-4 mb-8">
+            <input type="text" id="taskInput" placeholder="Add a new task..." required
+                   class="flex-grow p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 transition-colors duration-200">
+            <button type="submit" id="addTaskBtn"
+                    class="bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-indigo-700 transition-colors duration-200">
+                Add Task
+            </button>
+        </form>
+
+        <!-- Task List -->
+        <div id="taskList" class="space-y-4">
+            <!-- Tasks will be rendered here dynamically -->
+        </div>
+
+        <!-- Message Box -->
+        <div id="messageBox" class="mt-8 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded-lg hidden">
+            <span></span>
+        </div>
+    </div>
+
+    <script>
+        // Data and State Management
+        let tasks = []; // In a real app, this would be fetched from a server.
+        const taskListEl = document.getElementById('taskList');
+        const taskFormEl = document.getElementById('taskForm');
+        const taskInputEl = document.getElementById('taskInput');
+        const messageBoxEl = document.getElementById('messageBox');
+
+        // Utility function to display messages
+        function showMessage(text, type = 'info') {
+            const messageEl = messageBoxEl.querySelector('span');
+            messageEl.textContent = text;
+            messageBoxEl.classList.remove('hidden', 'bg-red-100', 'bg-green-100', 'bg-yellow-100');
+            messageBoxEl.classList.add(`bg-${type}-100`);
+            // Hide the message after 3 seconds
+            setTimeout(() => {
+                messageBoxEl.classList.add('hidden');
+            }, 3000);
+        }
+
+        // --- Simulated API Service ---
+        // This is where a real-world application would make network requests.
+        // We are using async/await and setTimeout to mimic network latency.
+
+        const apiService = {
+            async fetchTasks() {
+                // Simulating a GET request to a /tasks endpoint
+                showMessage('Fetching tasks...');
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Simulated server response with mock data
+                const mockTasks = [
+                    { id: 1, text: 'Learn front-end architecture', completed: false },
+                    { id: 2, text: 'Understand back-end principles', completed: false },
+                    { id: 3, text: 'Integrate the two with an API', completed: true }
+                ];
+                tasks = mockTasks;
+                showMessage('Tasks fetched successfully!', 'green');
+                return tasks;
+            },
+
+            async addTask(text) {
+                // Simulating a POST request to a /tasks endpoint
+                showMessage('Adding task...');
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Create a new task object with a temporary ID
+                const newTask = {
+                    id: Date.now(), // Real apps use database-generated IDs
+                    text: text,
+                    completed: false
+                };
+                tasks.push(newTask);
+                showMessage('Task added!', 'green');
+                return newTask;
+            },
+
+            async updateTaskStatus(taskId, completed) {
+                // Simulating a PUT/PATCH request to a /tasks/:id endpoint
+                showMessage('Updating task status...');
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                const task = tasks.find(t => t.id === taskId);
+                if (task) {
+                    task.completed = completed;
+                    showMessage('Task updated!', 'green');
+                    return task;
+                } else {
+                    showMessage('Error: Task not found.', 'red');
+                    throw new Error('Task not found');
+                }
+            },
+
+            async deleteTask(taskId) {
+                // Simulating a DELETE request to a /tasks/:id endpoint
+                showMessage('Deleting task...');
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                tasks = tasks.filter(t => t.id !== taskId);
+                showMessage('Task deleted!', 'green');
+            }
+        };
+
+        // --- Core Rendering and Event Handling Logic ---
+
+        // Renders all tasks in the list
+        function renderTasks() {
+            taskListEl.innerHTML = ''; // Clear the current list
+            if (tasks.length === 0) {
+                taskListEl.innerHTML = '<p class="text-center text-gray-400">No tasks yet. Add one!</p>';
+                return;
+            }
+
+            tasks.forEach(task => {
+                const taskItem = document.createElement('div');
+                taskItem.className = 'task-item';
+                taskItem.dataset.id = task.id;
+
+                const textSpan = document.createElement('span');
+                textSpan.textContent = task.text;
+                if (task.completed) {
+                    textSpan.classList.add('done');
+                }
+
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'flex items-center space-x-2';
+
+                const completeBtn = document.createElement('button');
+                completeBtn.textContent = '✅';
+                completeBtn.className = 'text-2xl hover:scale-110 transition-transform';
+                completeBtn.onclick = async () => {
+                    await apiService.updateTaskStatus(task.id, !task.completed);
+                    renderTasks();
+                };
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = '❌';
+                deleteBtn.className = 'text-xl hover:scale-110 transition-transform';
+                deleteBtn.onclick = async () => {
+                    await apiService.deleteTask(task.id);
+                    renderTasks();
+                };
+
+                actionsDiv.append(completeBtn, deleteBtn);
+                taskItem.append(textSpan, actionsDiv);
+                taskListEl.appendChild(taskItem);
+            });
+        }
+
+        // Handles the form submission for adding a new task
+        taskFormEl.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const taskText = taskInputEl.value.trim();
+            if (taskText) {
+                await apiService.addTask(taskText);
+                taskInputEl.value = ''; // Clear the input field
+                renderTasks();
+            }
+        });
+
+        // Initial fetch and render when the page loads
+        (async () => {
+            await apiService.fetchTasks();
+            renderTasks();
+        })();
+
+    </script>
+</body>
+</html>
