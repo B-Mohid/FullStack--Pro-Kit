@@ -16,7 +16,7 @@ To get this project up and running on your local machine, follow these steps.
 
 Clone the Repository
 
-git clone [https://github.com/your-username/FullStack-Pro-Kit.git](https://github.com/your-username/FullStack-Pro-Kit.git)
+git clone [https://github.com/B-Mohid/FullStack-Pro-Kit.git].
 cd FullStack-Pro-Kit
 
 Install Dependencies
